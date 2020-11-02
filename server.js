@@ -1,11 +1,21 @@
+require('dotenv').config();
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3001;
-require('dotenv').config();
+
+//connect to MongodDB
+const MONGODB_URI = process.env.MONGODB_URI
+  || "mongodb://localhost/daily_validation_db";
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(require('cookie-parser')());
+
+require('./config/passport-init')(app);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
